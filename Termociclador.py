@@ -51,7 +51,15 @@ if codigo_ingresado in df['Código'].values:
         conteo = Counter(secuencia)
 
         # Calcular peso molecular total
-        peso_total = sum(masas_aminoacidos[aa] * n for aa, n in conteo.items())
+        # Peso sin corrección (suma total de residuos)
+        peso_sin_agua = sum(masas_aminoacidos[aa] * n for aa, n in conteo.items())
+        
+        # Número total de residuos
+        n_residuos = sum(conteo.values())
+        
+        # Corrección por enlaces peptídicos
+        correccion = 18.015 * (n_residuos - 1)
+        peso_total = peso_sin_agua - correccion
 
         # Calcular proporción másica (%)
         proporciones = {aa: (masas_aminoacidos[aa] * n / peso_total * 100) for aa, n in conteo.items()}
@@ -60,7 +68,8 @@ if codigo_ingresado in df['Código'].values:
         # Mostrar resultados
         st.markdown("### Análisis de la muestra")
         st.markdown(f"**Secuencia (oculta):** {len(secuencia)} residuos")
-        st.markdown(f"**Peso molecular estimado:** `{peso_total:.2f} Da`")
+        st.markdown(f"**Peso molecular estimado (ajustado):** `{peso_total:.2f} Da`")
+        st.markdown(f"_Corrección aplicada: –{correccion:.2f} Da por pérdida de agua en {n_residuos - 1} enlaces._")
 
         # Mostrar tabla
         df_prop = pd.DataFrame({
