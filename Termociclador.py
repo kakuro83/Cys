@@ -37,11 +37,13 @@ masas_aminoacidos = {
 }
 
 # --- PROCESAMIENTO SI EL CÓDIGO ES VÁLIDO ---
-if codigo_ingresado in df['Código'].values:
-    # Limpiar etiqueta cíclica si la tiene
+if codigo_ingresado and codigo_ingresado in df['Código'].values:
+    fila = df[df['Código'] == codigo_ingresado].iloc[0]
+    secuencia_real = fila['Secuencia'].strip()
+    ciclico = str(fila['Cíclico']).strip().lower() in ['sí', 'si', 'true', '1']
     secuencia = secuencia_real.replace("(c)", "").strip().upper()
 
-    # Verificar caracteres válidos
+    # Solo si la secuencia es válida
     secuencia_valida = all(aa in masas_aminoacidos for aa in secuencia)
     if not secuencia_valida:
         st.error("La secuencia contiene aminoácidos inválidos.")
