@@ -170,3 +170,44 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 st.markdown("### Fragmentos generados por el corte:")
                 for i, frag in enumerate(fragmentos, start=1):
                     st.markdown(f"- Fragmento {i}: `{frag}`")
+
+                # --- GUARDAMOS LOS FRAGMENTOS EN EL ESTADO PARA REUTILIZARLOS ---
+                st.session_state["fragmentos_actuales"] = fragmentos
+                st.session_state["fragmentos_origen"] = {"Secuencia original": secuencia}
+                for idx, frag in enumerate(fragmentos):
+                    st.session_state["fragmentos_origen"][f"Fragmento {idx+1}"] = frag
+                
+                # --- OPCIÓN PARA HACER OTRO CORTE ---
+                st.markdown("### ¿Quieres hacer otro corte?")
+                hacer_otro = st.radio("Selecciona una opción:", ["No", "Sí"], horizontal=True)
+                
+                if hacer_otro == "Sí":
+                    # Selección del fragmento sobre el cual cortar
+                    seleccion = st.selectbox("Selecciona la secuencia o fragmento sobre el cual aplicar el corte:", 
+                                             list(st.session_state["fragmentos_origen"].keys()))
+                
+                    fragmento_seleccionado = st.session_state["fragmentos_origen"][seleccion]
+                
+                    # Cortador nuevo
+                    st.markdown("### Selecciona el segundo agente de corte")
+                    cortador_nuevo = st.selectbox("Selecciona un cortador:", cortador_nombres, key="corte2")
+                
+                    if cortador_nuevo:
+                        info = cortadores[cortador_nuevo]
+                        residuos = info["residuos"]
+                        modo = info["modo"]
+                
+                        if modo == "aleatorio":
+                            st.info("**Digestión con HCl 6M:** corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+                        else:
+                            st.info(f"**{cortador_nuevo}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
+                
+                        # Aplicar corte
+                        if modo == "aleatorio":
+                            nuevos = digestion_aleatoria_controlada(fragmento_seleccionado)
+                        else:
+                            nuevos = cortar_peptido(fragmento_seleccionado, residuos, modo)
+                
+                        st.markdown(f"### Fragmentos generados sobre {seleccion}:")
+                        for i, frag in enumerate(nuevos, start=1):
+                            st.markdown(f"- Fragmento {i}: `{frag}`")
