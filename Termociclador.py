@@ -66,10 +66,10 @@ if codigo_ingresado in df['Código'].values:
         proporciones_ordenadas = dict(sorted(proporciones.items(), key=lambda x: x[0]))
 
         # Mostrar resultados
-        st.markdown("### Análisis de la muestra")
-        st.markdown(f"**Secuencia (oculta):** {len(secuencia)} residuos")
-        st.markdown(f"**Peso molecular estimado (ajustado):** `{peso_total:.2f} Da`")
-        st.markdown(f"_Corrección aplicada: –{correccion:.2f} Da por pérdida de agua en {n_residuos - 1} enlaces._")
+        #st.markdown("### Análisis de la muestra")
+        #st.markdown(f"**Secuencia (oculta):** {len(secuencia)} residuos")
+        #st.markdown(f"**Peso molecular estimado (ajustado):** `{peso_total:.2f} Da`")
+        #st.markdown(f"_Corrección aplicada: –{correccion:.2f} Da por pérdida de agua en {n_residuos - 1} enlaces._")
 
         # Mostrar tabla
         df_prop = pd.DataFrame({
@@ -82,9 +82,9 @@ if codigo_ingresado in df['Código'].values:
 import numpy as np
 
 # Mostrar proporciones al estudiante (como pista)
-#st.markdown("### Composición másica de la muestra")
-#st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
-#st.dataframe(df_prop.set_index('Aminoácido'))
+st.markdown("### Composición másica de la muestra")
+st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
+st.dataframe(df_prop.set_index('Aminoácido'))
 
 # Cálculo del recorrido en SDS-PAGE
 log_mr = np.log10(peso_total)
