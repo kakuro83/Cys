@@ -82,9 +82,9 @@ if codigo_ingresado in df['Código'].values:
 import numpy as np
 
 # Mostrar proporciones al estudiante (como pista)
-st.markdown("### Composición másica de la muestra")
-st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
-st.dataframe(df_prop.set_index('Aminoácido'))
+#st.markdown("### Composición másica de la muestra")
+#st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
+#st.dataframe(df_prop.set_index('Aminoácido'))
 
 # Cálculo del recorrido en SDS-PAGE
 log_mr = np.log10(peso_total)
