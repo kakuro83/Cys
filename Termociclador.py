@@ -26,4 +26,4 @@ if codigo_ingresado:
     else:
         st.error("Código no encontrado en la base de datos.")
 
-st.write("Columnas detectadas:", df.columns.tolist())
+#st.write("Columnas detectadas:", df.columns.tolist())
