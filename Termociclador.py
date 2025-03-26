@@ -43,85 +43,56 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
     ciclico = str(fila['Cíclico']).strip().lower() in ['sí', 'si', 'true', '1']
     secuencia = secuencia_real.replace("(c)", "").strip().upper()
 
-    # Solo si la secuencia es válida
     secuencia_valida = all(aa in masas_aminoacidos for aa in secuencia)
+
     if not secuencia_valida:
         st.error("La secuencia contiene aminoácidos inválidos.")
     else:
-        # Calcular frecuencia de cada aminoácido
         from collections import Counter
         conteo = Counter(secuencia)
-
-        # Calcular peso molecular total
-        # Peso sin corrección (suma total de residuos)
-        peso_sin_agua = sum(masas_aminoacidos[aa] * n for aa, n in conteo.items())
-        
-        # Número total de residuos
         n_residuos = sum(conteo.values())
-        
-        # Corrección por enlaces peptídicos
+
+        # Peso sin corrección
+        peso_sin_agua = sum(masas_aminoacidos[aa] * n for aa, n in conteo.items())
         correccion = 18.015 * (n_residuos - 1)
         peso_total = peso_sin_agua - correccion
 
-        # Calcular proporción másica (%)
+        # Proporciones másicas
         proporciones = {aa: (masas_aminoacidos[aa] * n / peso_total * 100) for aa, n in conteo.items()}
         proporciones_ordenadas = dict(sorted(proporciones.items(), key=lambda x: x[0]))
 
-        # Mostrar resultados
-        #st.markdown("### Análisis de la muestra")
-        #st.markdown(f"**Secuencia (oculta):** {len(secuencia)} residuos")
-        #st.markdown(f"**Peso molecular estimado (ajustado):** `{peso_total:.2f} Da`")
-        #st.markdown(f"_Corrección aplicada: –{correccion:.2f} Da por pérdida de agua en {n_residuos - 1} enlaces._")
+        # Mostramos los datos al estudiante
+        st.markdown("### Caracterización de la muestra purificada")
+        st.markdown(f"**Peso molecular total estimado del péptido:** `{peso_total:.2f} Da`")
 
-        # Mostrar tabla
         df_prop = pd.DataFrame({
             'Aminoácido': list(proporciones_ordenadas.keys()),
+            'Masa molar (Da)': [masas_aminoacidos[aa] for aa in proporciones_ordenadas.keys()],
             '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
         })
-        #st.markdown("**Proporciones másicas calculadas:**")
-        #st.dataframe(df_prop.set_index('Aminoácido'))
 
-import numpy as np
+        st.markdown("**Proporciones másicas y masas molares:**")
+        st.dataframe(df_prop.set_index('Aminoácido'))
 
-# Mostrar resultados al estudiante
-st.markdown("### Caracterización de la muestra purificada")
+        # Validación del número de aminoácidos
+        st.markdown("### Verificación del número de residuos")
+        respuesta_estudiante = st.number_input("Número de aminoácidos", min_value=1, step=1, format="%d")
 
-st.markdown(f"**Peso molecular total estimado del péptido:** `{peso_total:.2f} Da`")
+        if respuesta_estudiante:
+            if int(respuesta_estudiante) == n_residuos:
+                st.success("¡Correcto! Puedes continuar con el análisis.")
+                continuar = True
+            else:
+                st.error("❌ Revisa bien tus cálculos. Identifica si estás utilizando los pesos moleculares correctamente. ¡Y no te olvides de los enlaces peptídicos!")
+                continuar = False
+        else:
+            continuar = False
 
-# Crear DataFrame con masa molar y % másico
-df_prop = pd.DataFrame({
-    'Aminoácido': list(proporciones_ordenadas.keys()),
-    'Masa molar (Da)': [masas_aminoacidos[aa] for aa in proporciones_ordenadas.keys()],
-    '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
-})
-
-st.markdown("**Proporciones másicas y masas molares:**")
-st.dataframe(df_prop.set_index('Aminoácido'))
-
-st.markdown("### Verificación del número de residuos")
-st.markdown("Con base en el peso molecular total y las proporciones másicas, indica cuántos aminoácidos contiene el péptido:")
-
-# Número real de residuos
-numero_real = sum(conteo.values())
-
-# Entrada del estudiante
-respuesta_estudiante = st.number_input("Número de aminoácidos", min_value=1, step=1, format="%d")
-
-if respuesta_estudiante:
-    if int(respuesta_estudiante) == numero_real:
-        st.success("¡Correcto! Puedes continuar con el análisis.")
-        continuar = True
-    else:
-        st.error("❌ Revisa bien tus cálculos. Identifica si estás utilizando los pesos moleculares correctamente. ¡Y no te olvides de los enlaces peptídicos!")
-        continuar = False
-else:
-    continuar = False
-
-if continuar:
-    st.markdown("### Resultado del análisis por FDNB (método de Sanger)")
-
-    if ciclico:
-        st.info("No se detectó ningún aminoácido N-terminal, lo cual sugiere que el péptido podría ser **cíclico**.")
-    else:
-        residuo_fdnb = secuencia[0]  # primer residuo de la secuencia
-        st.success(f"El análisis por FDNB indica que el residuo **N-terminal** es: `{residuo_fdnb}`")
+        # FDNB
+        if continuar:
+            st.markdown("### Resultado del análisis por FDNB (método de Sanger)")
+            if ciclico:
+                st.info("No se detectó ningún aminoácido N-terminal, lo cual sugiere que el péptido podría ser **cíclico**.")
+            else:
+                residuo_fdnb = secuencia[0]
+                st.success(f"El análisis por FDNB indica que el residuo **N-terminal** es: `{residuo_fdnb}`")
