@@ -152,9 +152,22 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 # --- FUNCIÓN DE DIGESTIÓN CON HCl 6M (fragmentos aleatorios controlados) ---
                 def digestion_aleatoria_controlada(secuencia):
                     longitud = len(secuencia)
+                    if longitud <= 1:
+                        return [secuencia]
+                
+                    # Determinar número deseado de fragmentos
                     n_fragmentos = 5
                     if longitud > 10:
                         n_fragmentos += (longitud - 10) // 3
+                
+                    # No puede haber más fragmentos que residuos
+                    n_fragmentos = min(n_fragmentos, longitud)
+                
+                    # Si solo cabe uno, devolver la secuencia completa
+                    if n_fragmentos == 1:
+                        return [secuencia]
+                
+                    # Seleccionar cortes válidos
                     indices = sorted(random.sample(range(1, longitud), n_fragmentos - 1))
                     indices = [0] + indices + [longitud]
                     fragmentos = [secuencia[indices[i]:indices[i+1]] for i in range(len(indices) - 1)]
