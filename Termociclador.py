@@ -57,11 +57,15 @@ if codigo_ingresado in df['Código'].values:
         proporciones = {aa: (masas_aminoacidos[aa] * n / peso_total * 100) for aa, n in conteo.items()}
         proporciones_ordenadas = dict(sorted(proporciones.items(), key=lambda x: x[0]))
 
+        # Mostrar resultados
         st.markdown("### Análisis de la muestra")
-        st.write(f"**Peso molecular estimado:** {peso_total:.2f} Da")
+        st.markdown(f"**Secuencia (oculta):** {len(secuencia)} residuos")
+        st.markdown(f"**Peso molecular estimado:** `{peso_total:.2f} Da`")
 
-        st.markdown("**Proporción másica por aminoácido (%):**")
-        st.dataframe(pd.DataFrame({
+        # Mostrar tabla
+        df_prop = pd.DataFrame({
             'Aminoácido': list(proporciones_ordenadas.keys()),
-            '% másico': [f"{v:.2f}" for v in proporciones_ordenadas.values()]
-        }))
+            '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
+        })
+        st.markdown("**Proporciones másicas calculadas:**")
+        st.dataframe(df_prop.set_index('Aminoácido'))
