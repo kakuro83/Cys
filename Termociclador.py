@@ -1,34 +1,27 @@
 import streamlit as st
 import pandas as pd
 
-# --- FUNCIONES ---
+# --- FUNCIÓN PARA CARGAR HOJA "Cys" DESDE GOOGLE SHEETS ---
+@st.cache_data
+def cargar_hoja_cys():
+    url = "https://docs.google.com/spreadsheets/d/1X7dF-WjNNYzA3_FimcZ9IjDycQo8_t3oX9J_ekxqtl4/gviz/tq?tqx=out:csv&sheet=Cys"
+    df = pd.read_csv(url)
+    df['Código'] = df['Código'].str.strip().str.upper()
+    return df
 
-def cargar_secuencias_desde_google(url):
-    try:
-        df = pd.read_csv(url)
-        df['Código'] = df['Código'].str.strip().str.upper()
-        return df
-    except Exception as e:
-        st.error(f"No se pudo leer la hoja de Google Sheets: {e}")
-        return pd.DataFrame()
+# --- INTERFAZ DE USUARIO ---
+st.title("Termociclador Virtual – Carga de muestra")
 
-# --- INTERFAZ ---
+df = cargar_hoja_cys()
 
-st.title("Termociclador Virtual – Paso 1: Cargar muestra")
+codigo_ingresado = st.text_input("Ingresa el código de la muestra (ej. P001):").strip().upper()
 
-url_default = "https://docs.google.com/spreadsheets/d/1X7dF-WjNNYzA3_FimcZ9IjDycQo8_t3oX9J_ekxqtl4/gviz/tq?tqx=out:csv&sheet=Cys"
-url = st.text_input("URL de la hoja pública con las secuencias (hoja Cys):", value=url_default)
-
-codigo = st.text_input("Código de muestra (ej. P001):").strip().upper()
-
-if st.button("Cargar muestra"):
-    df = cargar_secuencias_desde_google(url)
-    if not df.empty and codigo in df['Código'].values:
-        fila = df[df['Código'] == codigo].iloc[0]
-        secuencia_real = fila['Secuencia']
-        ciclico = fila['Cíclico']
-        st.success(f"Secuencia cargada para {codigo}")
-        st.code(f"(Oculta) {'(c)' if ciclico == 'Sí' else ''}{secuencia_real}")
-        st.markdown(f"**¿Cíclico?** {ciclico}")
+if codigo_ingresado:
+    if codigo_ingresado in df['Código'].values:
+        fila = df[df['Código'] == codigo_ingresado].iloc[0]
+        secuencia_real = fila['Secuencia'].strip()
+        ciclico = str(fila['Cíclico']).strip().lower() in ['sí', 'si', 'true', '1']
+        st.success(f"Muestra {codigo_ingresado} cargada correctamente.")
+        st.markdown(f"Esta muestra es **{'cíclica' if ciclico else 'lineal'}**.")
     else:
-        st.warning("Código no encontrado en la hoja.")
+        st.error("Código no encontrado en la base de datos.")
