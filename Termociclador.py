@@ -25,3 +25,5 @@ if codigo_ingresado:
         st.markdown(f"Esta muestra es **{'cíclica' if ciclico else 'lineal'}**.")
     else:
         st.error("Código no encontrado en la base de datos.")
+
+st.write("Columnas detectadas:", df.columns.tolist())
