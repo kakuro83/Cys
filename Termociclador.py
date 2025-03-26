@@ -96,3 +96,55 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             else:
                 residuo_fdnb = secuencia[0]
                 st.success(f"El análisis por FDNB indica que el residuo **N-terminal** es: `{residuo_fdnb}`")
+
+        # --- DICCIONARIO DE CORTADORES DISPONIBLES ---
+        cortadores = {
+            "Tripsina": {"residuos": ["K", "R"], "modo": "después"},
+            "Quimotripsina": {"residuos": ["F", "Y", "W"], "modo": "después"},
+            "CNBr": {"residuos": ["M"], "modo": "después"},
+            "Pepsina": {"residuos": ["L", "F", "E"], "modo": "antes"},
+            "Bromelina": {"residuos": ["A", "G"], "modo": "antes"}
+        }
+        
+        # --- SELECCIÓN DEL CORTADOR ---
+        st.markdown("### Selección del primer agente de corte")
+        
+        cortador_nombres = list(cortadores.keys())
+        cortador_elegido = st.selectbox("Selecciona un agente de corte:", cortador_nombres)
+        
+        if cortador_elegido:
+            residuos = cortadores[cortador_elegido]["residuos"]
+            modo = cortadores[cortador_elegido]["modo"]
+        
+            st.info(f"**{cortador_elegido}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
+        
+            # --- FUNCIÓN DE CORTE ---
+            def cortar_peptido(secuencia, residuos, modo):
+                fragmentos = []
+                actual = ""
+        
+                for i, aa in enumerate(secuencia):
+                    if modo == "después":
+                        actual += aa
+                        if aa in residuos:
+                            fragmentos.append(actual)
+                            actual = ""
+                    elif modo == "antes":
+                        if aa in residuos:
+                            if actual:
+                                fragmentos.append(actual)
+                            actual = aa
+                        else:
+                            actual += aa
+        
+                if actual:
+                    fragmentos.append(actual)
+                return fragmentos
+        
+            # --- APLICAR EL CORTE SOBRE LA SECUENCIA ORIGINAL ---
+            fragmentos = cortar_peptido(secuencia, residuos, modo)
+        
+            st.markdown("### Fragmentos generados por el corte:")
+            for i, frag in enumerate(fragmentos, start=1):
+                st.markdown(f"- Fragmento {i}: `{frag}`")
+
