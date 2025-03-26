@@ -81,16 +81,17 @@ if codigo_ingresado in df['Código'].values:
 
 import numpy as np
 
-# Mostrar proporciones al estudiante (como pista)
-st.markdown("### Composición másica de la muestra")
-st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
+# Mostrar resultados al estudiante
+st.markdown("### Caracterización de la muestra purificada")
+
+st.markdown(f"**Peso molecular total estimado del péptido:** `{peso_total:.2f} Da`")
+
+# Crear DataFrame con masa molar y % másico
+df_prop = pd.DataFrame({
+    'Aminoácido': list(proporciones_ordenadas.keys()),
+    'Masa molar (Da)': [masas_aminoacidos[aa] for aa in proporciones_ordenadas.keys()],
+    '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
+})
+
+st.markdown("**Proporciones másicas y masas molares:**")
 st.dataframe(df_prop.set_index('Aminoácido'))
-
-# Cálculo del recorrido en SDS-PAGE
-log_mr = np.log10(peso_total)
-recorrido = (log_mr - 2.2) / (-0.015)
-
-# Mostrar fórmula como LaTeX
-st.markdown("### Análisis SDS-PAGE")
-st.latex(r"\log(M_r) = 2.2 - 0.015 \cdot R")
-st.markdown(f"**Recorrido estimado del péptido en el gel:** `{recorrido:.2f} cm`")
