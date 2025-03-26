@@ -97,33 +97,38 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 residuo_fdnb = secuencia[0]
                 st.success(f"El análisis por FDNB indica que el residuo **N-terminal** es: `{residuo_fdnb}`")
 
+        import random
+
         # --- DICCIONARIO DE CORTADORES DISPONIBLES ---
         cortadores = {
             "Tripsina": {"residuos": ["K", "R"], "modo": "después"},
             "Quimotripsina": {"residuos": ["F", "Y", "W"], "modo": "después"},
             "CNBr": {"residuos": ["M"], "modo": "después"},
             "Pepsina": {"residuos": ["L", "F", "E"], "modo": "antes"},
-            "Bromelina": {"residuos": ["A", "G"], "modo": "antes"}
+            "Bromelina": {"residuos": ["A", "G"], "modo": "antes"},
+            "Digestión con HCl 6M": {"residuos": [], "modo": "aleatorio"}
         }
         
-        # --- SELECCIÓN DEL CORTADOR ---
-        st.markdown("### Selección del primer agente de corte")
-        
+        # Mostrar lista desplegable de cortadores
         cortador_nombres = list(cortadores.keys())
         cortador_elegido = st.selectbox("Selecciona un agente de corte:", cortador_nombres)
         
         if cortador_elegido:
-            residuos = cortadores[cortador_elegido]["residuos"]
-            modo = cortadores[cortador_elegido]["modo"]
+            info = cortadores[cortador_elegido]
+            residuos = info["residuos"]
+            modo = info["modo"]
         
-            st.info(f"**{cortador_elegido}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
+            if modo == "aleatorio":
+                st.info("**Digestión con HCl 6M:** corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+            else:
+                st.info(f"**{cortador_elegido}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
         
-            # --- FUNCIÓN DE CORTE ---
+            # --- FUNCIÓN DE CORTE ESTÁNDAR ---
             def cortar_peptido(secuencia, residuos, modo):
                 fragmentos = []
                 actual = ""
         
-                for i, aa in enumerate(secuencia):
+                for aa in secuencia:
                     if modo == "después":
                         actual += aa
                         if aa in residuos:
@@ -136,15 +141,28 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                             actual = aa
                         else:
                             actual += aa
-        
                 if actual:
                     fragmentos.append(actual)
                 return fragmentos
         
-            # --- APLICAR EL CORTE SOBRE LA SECUENCIA ORIGINAL ---
-            fragmentos = cortar_peptido(secuencia, residuos, modo)
+            # --- FUNCIÓN DE CORTE ALEATORIO PARA HCl ---
+            def digestion_aleatoria(secuencia, min_len=2, max_len=5):
+                fragmentos = []
+                i = 0
+                while i < len(secuencia):
+                    largo = random.randint(min_len, max_len)
+                    fragmento = secuencia[i:i+largo]
+                    fragmentos.append(fragmento)
+                    i += largo
+                return fragmentos
         
+            # --- EJECUTAR EL CORTE ---
+            if modo == "aleatorio":
+                fragmentos = digestion_aleatoria(secuencia)
+            else:
+                fragmentos = cortar_peptido(secuencia, residuos, modo)
+        
+            # --- MOSTRAR RESULTADO ---
             st.markdown("### Fragmentos generados por el corte:")
             for i, frag in enumerate(fragmentos, start=1):
                 st.markdown(f"- Fragmento {i}: `{frag}`")
-
