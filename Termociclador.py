@@ -78,3 +78,19 @@ if codigo_ingresado in df['Código'].values:
         })
         st.markdown("**Proporciones másicas calculadas:**")
         st.dataframe(df_prop.set_index('Aminoácido'))
+
+import numpy as np
+
+# Mostrar proporciones al estudiante (como pista)
+st.markdown("### Composición másica de la muestra")
+st.markdown("La siguiente tabla muestra la proporción másica (%) de cada aminoácido detectado experimentalmente:")
+st.dataframe(df_prop.set_index('Aminoácido'))
+
+# Cálculo del recorrido en SDS-PAGE
+log_mr = np.log10(peso_total)
+recorrido = (log_mr - 2.2) / (-0.015)
+
+# Mostrar fórmula como LaTeX
+st.markdown("### Análisis SDS-PAGE")
+st.latex(r"\log(M_r) = 2.2 - 0.015 \cdot R")
+st.markdown(f"**Recorrido estimado del péptido en el gel:** `{recorrido:.2f} cm`")
