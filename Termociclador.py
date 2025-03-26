@@ -77,7 +77,7 @@ if codigo_ingresado in df['Código'].values:
             '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
         })
         #st.markdown("**Proporciones másicas calculadas:**")
-        st.dataframe(df_prop.set_index('Aminoácido'))
+        #st.dataframe(df_prop.set_index('Aminoácido'))
 
 import numpy as np
 
