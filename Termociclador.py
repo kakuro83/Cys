@@ -95,3 +95,22 @@ df_prop = pd.DataFrame({
 
 st.markdown("**Proporciones másicas y masas molares:**")
 st.dataframe(df_prop.set_index('Aminoácido'))
+
+st.markdown("### Verificación del número de residuos")
+st.markdown("Con base en el peso molecular total y las proporciones másicas, indica cuántos aminoácidos contiene el péptido:")
+
+# Número real de residuos
+numero_real = sum(conteo.values())
+
+# Entrada del estudiante
+respuesta_estudiante = st.number_input("Número de aminoácidos", min_value=1, step=1, format="%d")
+
+if respuesta_estudiante:
+    if int(respuesta_estudiante) == numero_real:
+        st.success("¡Correcto! Puedes continuar con el análisis.")
+        continuar = True
+    else:
+        st.error("❌ Revisa bien tus cálculos. Identifica si estás utilizando los pesos moleculares correctamente. ¡Y no te olvides de los enlaces peptídicos!")
+        continuar = False
+else:
+    continuar = False
