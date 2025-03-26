@@ -114,3 +114,12 @@ if respuesta_estudiante:
         continuar = False
 else:
     continuar = False
+
+if continuar:
+    st.markdown("### Resultado del análisis por FDNB (método de Sanger)")
+
+    if ciclico:
+        st.info("No se detectó ningún aminoácido N-terminal, lo cual sugiere que el péptido podría ser **cíclico**.")
+    else:
+        residuo_fdnb = secuencia[0]  # primer residuo de la secuencia
+        st.success(f"El análisis por FDNB indica que el residuo **N-terminal** es: `{residuo_fdnb}`")
