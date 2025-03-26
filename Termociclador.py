@@ -16,16 +16,17 @@ def cargar_csv_desde_github(url):
 
 st.title("Termociclador Virtual – Paso 1: Cargar muestra")
 
-url = st.text_input("Ingresa el enlace RAW del archivo CSV en GitHub:", 
-                    value="https://raw.githubusercontent.com/tu_usuario/tu_repo/main/secuencias.csv")
+url_default = "https://raw.githubusercontent.com/kakuro83/Cys/4b64b992d57942b8fa502d0ebb26287b32ead189/Secuencias.csv"
 
-codigo = st.text_input("Código de muestra (ej. P001):").strip().upper()
+url = st.text_input("URL RAW del archivo CSV en GitHub:", value=url_default)
+
+codigo = st.text_input("Código de la muestra (ej. P001):").strip().upper()
 
 if st.button("Cargar muestra"):
     df = cargar_csv_desde_github(url)
     if not df.empty and codigo in df['Código'].values:
         secuencia_real = df[df['Código'] == codigo]['Secuencia'].values[0]
-        st.success(f"Secuencia cargada para {codigo}")
+        st.success(f"Secuencia cargada para el código {codigo}:")
         st.code(secuencia_real)
     else:
-        st.warning("Código no encontrado.")
+        st.warning("Código no encontrado en el archivo.")
