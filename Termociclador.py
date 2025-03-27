@@ -78,7 +78,48 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
         })
 
         st.markdown("**Proporciones másicas y masas molares:**")
-        st.dataframe(df_prop.set_index('Aminoácido'))
+        
+        # HTML personalizado para mostrar tabla centrada y uniforme
+        tabla_html = """
+        <style>
+        .table-center th, .table-center td {
+            text-align: center;
+            padding: 6px;
+            min-width: 140px;
+        }
+        .table-center {
+            border-collapse: collapse;
+            margin: auto;
+        }
+        .table-center th {
+            background-color: #f0f0f0;
+        }
+        .table-center, .table-center th, .table-center td {
+            border: 1px solid #bbb;
+        }
+        </style>
+        <table class='table-center'>
+            <tr>
+                <th>Aminoácido</th>
+                <th>Masa molar (Da)</th>
+                <th>% másico</th>
+            </tr>
+        """
+        for i in df_prop.index:
+            aa = df_prop.loc[i, 'Aminoácido']
+            masa = df_prop.loc[i, 'Masa molar (Da)']
+            porcentaje = df_prop.loc[i, '% másico']
+            tabla_html += f"""
+            <tr>
+                <td>{aa}</td>
+                <td>{masa:.2f}</td>
+                <td>{porcentaje:.2f}</td>
+            </tr>
+            """
+        tabla_html += "</table>"
+        
+        st.markdown(tabla_html, unsafe_allow_html=True)
+
 
         st.markdown("### Verificación del número de residuos")
         st.markdown("Con base en el peso molecular total y las proporciones másicas, indica cuántos aminoácidos contiene el péptido:")
