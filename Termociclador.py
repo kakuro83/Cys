@@ -201,7 +201,21 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     st.markdown(f"- Fragmento {i}: `{frag}`")
             
                 return nuevos
+
+            # --- DETECTAR CAMBIO DE CÓDIGO ---
+            codigo_actual = codigo_peptido  # debe ser la variable actual del código
             
+            if "codigo_anterior" not in st.session_state:
+                st.session_state.codigo_anterior = codigo_actual
+            
+            if st.session_state.codigo_anterior != codigo_actual:
+                st.session_state.codigo_anterior = codigo_actual
+                # Reiniciar termociclador
+                for key in ["fragmentos_disponibles", "resumen_rondas", "numero_ronda"]:
+                    if key in st.session_state:
+                        del st.session_state[key]
+                st.experimental_rerun()
+
             # --- INICIO DEL TERMO CICLADOR ---
             st.markdown("## 🧪 Termociclador virtual")
 
