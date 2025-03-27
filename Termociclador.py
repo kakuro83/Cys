@@ -174,7 +174,25 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     )
                     secuencia_actual = opciones[seleccion]
 
+            def control_ronda_3():
+                if "hacer_otra_ronda_3" not in st.session_state:
+                    st.session_state["hacer_otra_ronda_3"] = None
             
+                st.session_state["hacer_otra_ronda_3"] = st.radio(
+                    "¿Quieres hacer otro corte (ronda 3)?",
+                    ["No", "Sí"],
+                    index=0 if st.session_state["hacer_otra_ronda_3"] is None else ["No", "Sí"].index(st.session_state["hacer_otra_ronda_3"]),
+                    key="radio_ronda_3"
+                )
+            
+                if st.session_state["hacer_otra_ronda_3"] == "Sí":
+                    fragmentos_ronda_3 = ejecutar_ronda(2, st.session_state["fragmentos_ronda_2"])
+                    st.session_state["fragmentos_ronda_3"] = fragmentos_ronda_3
+                    st.session_state["seleccion_ronda_3"] = {
+                        "fragmento": st.session_state.get("frag_ronda_2"),
+                        "cortador": st.session_state.get("corte_ronda_2")
+                    }
+
                 # --- Selección del cortador ---
                 cortador = st.selectbox(
                     f"Selecciona cortador (Ronda {ronda + 1}):",
