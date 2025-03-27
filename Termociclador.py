@@ -79,48 +79,42 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 
         st.markdown("**Proporciones másicas y masas molares:**")
         
-        # Crear tabla HTML con formato uniforme
-        tabla_html = """
-        <style>
-        .table-center th, .table-center td {
-            text-align: center;
-            padding: 6px;
-            min-width: 140px;
-            font-size: 16px;
-        }
-        .table-center {
-            border-collapse: collapse;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .table-center th {
-            background-color: #f4f4f4;
-        }
-        .table-center, .table-center th, .table-center td {
-            border: 1px solid #ccc;
-        }
-        </style>
-        <table class='table-center'>
-            <tr>
-                <th>Aminoácido</th>
-                <th>Masa molar (Da)</th>
-                <th>% másico</th>
-            </tr>
-        """
+        st.markdown("**Proporciones másicas y masas molares:**")
         
-        for _, fila in df_prop.iterrows():
-            tabla_html += f"""
-            <tr>
-                <td>{fila['Aminoácido']}</td>
-                <td>{fila['Masa molar (Da)']:.2f}</td>
-                <td>{fila['% másico']:.2f}</td>
-            </tr>
+        # Crear una copia para formatear las columnas
+        tabla = df_prop.copy()
+        tabla["Masa molar (Da)"] = tabla["Masa molar (Da)"].map("{:.2f}".format)
+        tabla["% másico"] = tabla["% másico"].map("{:.2f}".format)
+        
+        # Generar tabla HTML
+        html = tabla.to_html(index=False, classes='styled-table', justify='center', escape=False)
+        
+        # Inyectar estilo CSS
+        st.markdown(
             """
+            <style>
+            .styled-table {
+                border-collapse: collapse;
+                margin: auto;
+                font-size: 16px;
+                width: auto;
+                min-width: 480px;
+            }
+            .styled-table th, .styled-table td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: center;
+            }
+            .styled-table th {
+                background-color: #f0f0f0;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         
-        tabla_html += "</table>"
-        
-        st.markdown(tabla_html, unsafe_allow_html=True)
-
+        # Mostrar la tabla
+        st.markdown(html, unsafe_allow_html=True)
 
         st.markdown("### Verificación del número de residuos")
         st.markdown("Con base en el peso molecular total y las proporciones másicas, indica cuántos aminoácidos contiene el péptido:")
