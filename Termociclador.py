@@ -219,36 +219,24 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 st.markdown("---")
 st.markdown("## ✅ Validación de tu secuencia propuesta")
 
-# Inicialización segura
-if "secuencia_usuario" not in st.session_state:
-    st.session_state["secuencia_usuario"] = ""
-
-# Campo único editable
-entrada = st.text_input(
-    "Escribe tu secuencia (se convertirá automáticamente a mayúsculas excepto el prefijo '(c)'):",
-    value=st.session_state["secuencia_usuario"]
+# Campo de entrada editable
+entrada_cruda = st.text_input(
+    "Escribe tu secuencia (se convertirá automáticamente a mayúsculas):"
 )
 
-# Autoformato mientras escribe
-if entrada.lower().startswith("(c)"):
-    formateada = "(c)" + entrada[3:].upper()
+# Estandarización automática
+if entrada_cruda.lower().startswith("(c)"):
+    propuesta_estandar = "(c)" + entrada_cruda[3:].upper()
 else:
-    formateada = entrada.upper()
+    propuesta_estandar = entrada_cruda.upper()
 
-# Guardar entrada formateada
-st.session_state["secuencia_usuario"] = formateada
+# Vista previa no editable
+st.text_input("Vista previa estandarizada:", value=propuesta_estandar, disabled=True)
 
-# Mostrar celda nuevamente (actualizada)
-entrada_formateada = st.text_input(
-    "Tu secuencia estandarizada (puedes seguir editándola):",
-    value=formateada,
-    key="secuencia_final"
-)
-
-# Validación
+# Validación al hacer clic
 if st.button("🔍 Validar secuencia"):
     secuencia_real_sin_c = secuencia_real.replace("(c)", "").upper()
-    propuesta = st.session_state["secuencia_final"]
+    propuesta = propuesta_estandar
 
     if ciclico:
         if not propuesta.startswith("(C)"):
