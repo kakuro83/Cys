@@ -225,22 +225,22 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 for i, frag in enumerate(fragmentos_generados, 1):
                     st.markdown(f"- Fragmento {i}: `{frag}`")
     
-                if st.button("💾 Guardar corte"):
-                    st.session_state.resumen_rondas.append({
-                        "Ronda": st.session_state.numero_ronda,
-                        "Cortador": cortador,
-                        "Cortado desde": fragmento_seleccionado_label,
-                        "Fragmentos": fragmentos_generados
-                    })
-
+            if st.button("💾 Guardar corte"):
+                st.session_state.resumen_rondas.append({
+                    "Ronda": st.session_state.numero_ronda,
+                    "Cortador": cortador,
+                    "Cortado desde": fragmento_seleccionado_label,
+                    "Fragmentos": fragmentos_generados
+                })
+            
                 for i, frag in enumerate(fragmentos_generados, 1):
                     nueva_etiqueta = f"R{st.session_state.numero_ronda} - Fragmento {i}"
                     st.session_state.fragmentos_disponibles[nueva_etiqueta] = frag
-
+            
                 if st.session_state.numero_ronda < 10:
                     st.session_state.numero_ronda += 1
                 else:
-                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas. Reinicie el Termociclador")
+                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas. Reinicie el Termociclador.")
 
             if st.session_state.resumen_rondas:
                 st.markdown("---")
