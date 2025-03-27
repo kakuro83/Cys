@@ -154,32 +154,45 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 fragmentos = [secuencia[indices[i]:indices[i+1]] for i in range(len(indices) - 1)]
                 return fragmentos
             
-                def ejecutar_ronda(ronda, fragmentos_entrada):
-                    st.markdown(f"### Ronda {ronda + 1}: Selección de corte")
-                
-                    # --- Selección del fragmento solo desde ronda 2 en adelante ---
-                    if ronda == 0:
-                        secuencia_actual = fragmentos_entrada[0]
-                        seleccion = "Secuencia original"
-                    else:
-                        opciones = {f"Fragmento {i+1}": f for i, f in enumerate(fragmentos_entrada)}
-                        seleccion = st.selectbox(f"Selecciona fragmento para cortar (Ronda {ronda + 1}):", opciones.keys(), key=f"frag_ronda_{ronda}")
-                        secuencia_actual = opciones[seleccion]
+            def ejecutar_ronda(ronda, fragmentos_entrada):
+                st.markdown(f"### Ronda {ronda + 1}: Selección de corte")
             
-                cortador = st.selectbox(f"Selecciona cortador (Ronda {ronda + 1}):", list(cortadores.keys()), key=f"corte_ronda_{ronda}")
+                # --- Selección del fragmento solo desde ronda 2 en adelante ---
+                if ronda == 0:
+                    secuencia_actual = fragmentos_entrada[0]
+                    seleccion = "Secuencia original"
+                    st.info("Usando la secuencia original para el primer corte.")
+                else:
+                    opciones = {f"Fragmento {i+1}": f for i, f in enumerate(fragmentos_entrada)}
+                    seleccion = st.selectbox(
+                        f"Selecciona fragmento para cortar (Ronda {ronda + 1}):",
+                        opciones.keys(),
+                        key=f"frag_ronda_{ronda}"
+                    )
+                    secuencia_actual = opciones[seleccion]
+            
+                # --- Selección del cortador ---
+                cortador = st.selectbox(
+                    f"Selecciona cortador (Ronda {ronda + 1}):",
+                    list(cortadores.keys()),
+                    key=f"corte_ronda_{ronda}"
+                )
                 modo = cortadores[cortador]["modo"]
                 residuos = cortadores[cortador]["residuos"]
             
+                # --- Aplicar corte ---
                 if modo == "aleatorio":
                     nuevos = digestion_aleatoria_controlada(secuencia_actual)
                 else:
                     nuevos = cortar_peptido(secuencia_actual, residuos, modo)
             
+                # --- Mostrar resultado ---
                 st.markdown(f"**{cortador} aplicado sobre {seleccion} → Fragmentos generados:**")
                 for i, frag in enumerate(nuevos, 1):
                     st.markdown(f"- Fragmento {i}: `{frag}`")
             
                 return nuevos
+
             
             # --- INICIO DEL TERMO CICLADOR ---
             st.markdown("## 🧪 Termociclador virtual")
