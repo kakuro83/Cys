@@ -176,18 +176,18 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
                     fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
 
-        if fragmentos_generados:
-            st.markdown("**Fragmentos generados:**")
-            for i, frag in enumerate(fragmentos_generados, 1):
-                st.markdown(f"- Fragmento {i}: `{frag}`")
-
-            if st.button("💾 Guardar corte"):
-                st.session_state.resumen_rondas.append({
-                    "Ronda": st.session_state.numero_ronda,
-                    "Cortador": cortador,
-                    "Cortado desde": fragmento_seleccionado_label,
-                    "Fragmentos": fragmentos_generados
-                })
+            if fragmentos_generados:
+                st.markdown("**Fragmentos generados:**")
+                for i, frag in enumerate(fragmentos_generados, 1):
+                    st.markdown(f"- Fragmento {i}: `{frag}`")
+    
+                if st.button("💾 Guardar corte"):
+                    st.session_state.resumen_rondas.append({
+                        "Ronda": st.session_state.numero_ronda,
+                        "Cortador": cortador,
+                        "Cortado desde": fragmento_seleccionado_label,
+                        "Fragmentos": fragmentos_generados
+                    })
 
                 for i, frag in enumerate(fragmentos_generados, 1):
                     nueva_etiqueta = f"R{st.session_state.numero_ronda} - Fragmento {i}"
