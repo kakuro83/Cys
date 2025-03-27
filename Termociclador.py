@@ -11,7 +11,7 @@ def cargar_hoja_cys():
     return df
 
 # --- INTERFAZ DE USUARIO ---
-st.title("Termociclador Virtual – Carga de muestra")
+st.title("Termociclador Virtual")
 
 df = cargar_hoja_cys()
 
