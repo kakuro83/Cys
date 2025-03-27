@@ -79,23 +79,25 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 
         st.markdown("**Proporciones másicas y masas molares:**")
         
-        # HTML personalizado para mostrar tabla centrada y uniforme
+        # Crear tabla HTML con formato uniforme
         tabla_html = """
         <style>
         .table-center th, .table-center td {
             text-align: center;
             padding: 6px;
             min-width: 140px;
+            font-size: 16px;
         }
         .table-center {
             border-collapse: collapse;
-            margin: auto;
+            margin-left: auto;
+            margin-right: auto;
         }
         .table-center th {
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
         }
         .table-center, .table-center th, .table-center td {
-            border: 1px solid #bbb;
+            border: 1px solid #ccc;
         }
         </style>
         <table class='table-center'>
@@ -105,17 +107,16 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 <th>% másico</th>
             </tr>
         """
-        for i in df_prop.index:
-            aa = df_prop.loc[i, 'Aminoácido']
-            masa = df_prop.loc[i, 'Masa molar (Da)']
-            porcentaje = df_prop.loc[i, '% másico']
+        
+        for _, fila in df_prop.iterrows():
             tabla_html += f"""
             <tr>
-                <td>{aa}</td>
-                <td>{masa:.2f}</td>
-                <td>{porcentaje:.2f}</td>
+                <td>{fila['Aminoácido']}</td>
+                <td>{fila['Masa molar (Da)']:.2f}</td>
+                <td>{fila['% másico']:.2f}</td>
             </tr>
             """
+        
         tabla_html += "</table>"
         
         st.markdown(tabla_html, unsafe_allow_html=True)
