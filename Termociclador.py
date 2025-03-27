@@ -183,6 +183,13 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 )
                 modo = cortadores[cortador]["modo"]
                 residuos = cortadores[cortador]["residuos"]
+                
+                # Mostrar descripción del cortador
+                if modo == "aleatorio":
+                    st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+                else:
+                    st.info(f"**{cortador}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
+
             
                 # --- Aplicar corte ---
                 if modo == "aleatorio":
