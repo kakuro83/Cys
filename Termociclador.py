@@ -230,7 +230,7 @@ if st.button("🔍 Validar secuencia"):
 
     if ciclico:
         if not propuesta.startswith("(C)"):
-            st.error("La secuencia es cíclica. Debes comenzar con '(c)'.")
+            st.error("❌ La secuencia no es correcta. Revisa el orden o los residuos o si es cíclica.")
         else:
             propuesta_limpia = propuesta.replace("(C)", "")
             rotaciones_validas = rotaciones_ciclicas(secuencia_real_sin_c)
