@@ -262,16 +262,16 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                                     opciones[etiqueta] = frag
             
                     opciones_keys = list(opciones.keys())
-                    seleccion = st.selectbox(
-                        f"Selecciona el fragmento o secuencia a cortar (Ronda {ronda + 1}):",
-                        opciones_keys,
-                        index=0,
-                        key=clave_selector
-                    )
-            
-                    # Validar selección
-                    if seleccion is None or seleccion not in opciones:
-                        st.error("⚠️ No se ha podido recuperar el fragmento seleccionado. Intenta recargar.")
+                    try:
+                        seleccion = st.selectbox(
+                            f"Selecciona el fragmento o secuencia a cortar (Ronda {ronda + 1}):",
+                            opciones_keys,
+                            index=0,
+                            key=clave_selector
+                        )
+                        secuencia_actual = opciones[seleccion]
+                    except Exception as e:
+                        st.error(f"⚠️ Error recuperando la secuencia seleccionada: {e}")
                         st.stop()
             
                     secuencia_actual = opciones[seleccion]
