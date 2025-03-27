@@ -32,7 +32,7 @@ if codigo_ingresado:
         fila = df[df['Código'] == codigo_ingresado].iloc[0]
         secuencia_real = fila['Secuencia'].strip()
         ciclico = str(fila['Cíclico']).strip().lower() in ['sí', 'si', 'true', '1']
-        st.success(f"Muestra {codigo_ingresado} cargada correctamente.")
+        #st.success(f"Muestra {codigo_ingresado} cargada correctamente.")
         #st.markdown(f"Esta muestra es **{'cíclica' if ciclico else 'lineal'}**.")
     else:
         st.error("Código no encontrado en la base de datos.")
