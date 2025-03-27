@@ -10,6 +10,14 @@ def cargar_hoja_cys():
     df['Código'] = df['Código'].str.strip().str.upper()
     return df
 
+from PIL import Image
+
+# Carga del ícono
+icono = Image.open("termociclador_icono.png")
+st.image(icono, width=80)  # Ajusta el tamaño si lo deseas
+
+st.title("Termociclador Virtual")
+
 # --- INTERFAZ DE USUARIO ---
 st.title("Termociclador Virtual")
 
