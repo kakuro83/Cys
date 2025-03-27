@@ -266,7 +266,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 }
 
             # --- CONTROL DE RONDA 3 ---
-
+        
             # Verificar si ronda 2 existe
             if "fragmentos_ronda_2" in st.session_state:
             
