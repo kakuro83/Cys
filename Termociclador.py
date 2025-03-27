@@ -288,4 +288,4 @@ if st.button("🔁 Reiniciar termociclador"):
         if key in st.session_state:
             del st.session_state[key]
     st.success("Termociclador reiniciado. Puedes comenzar de nuevo.")
-    st.experimental_rerun()
+    st.rerun()
