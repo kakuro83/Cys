@@ -166,9 +166,17 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
                 fragmentos_generados = digestion_aleatoria_controlada(fragmento_seleccionado)
             else:
-                st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
-                fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
+                # Validación si contiene residuos objetivo
+                contiene_residuo = any(res in fragmento_seleccionado for res in residuos)
+                
+                if not contiene_residuo:
+                    st.warning("⚠️ Este cortador no sirve para la secuenciación: no se encontraron los residuos diana en la secuencia.")
+                    fragmentos_generados = []  # Evita mostrar fragmentos innecesarios
+                else:
+                    st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
+                    fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
 
+        if fragmentos_generados:
             st.markdown("**Fragmentos generados:**")
             for i, frag in enumerate(fragmentos_generados, 1):
                 st.markdown(f"- Fragmento {i}: `{frag}`")
