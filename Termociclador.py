@@ -255,38 +255,57 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 key="radio_ronda_2"
             )
             
-            # Ejecutar ronda 2 solo si el estudiante dijo que sí
-            if st.session_state["hacer_otra_ronda_2"] == "Sí":
-                fragmentos_ronda_2 = ejecutar_ronda(1, fragmentos_ronda_1)
-                st.session_state["fragmentos_ronda_2"] = fragmentos_ronda_2
-                st.session_state["seleccion_ronda_2"] = {
-                    "fragmento": st.session_state.get("frag_ronda_1"),
-                    "cortador": st.session_state.get("corte_ronda_1")
-                }
+            # --- RONDAS 2 EN ADELANTE ---
+            for ronda in range(1, st.session_state["num_rondas"]):
+                clave_frag = f"fragmentos_ronda_{ronda}"
+                clave_frag_anterior = f"fragmentos_ronda_{ronda - 1}"
+                clave_corte = f"corte_ronda_{ronda}"
+                clave_seleccion = f"frag_ronda_{ronda}"
+                clave_radio = f"radio_ronda_{ronda}"
             
-            # --- CONTROL DE RONDA 3 ---
+                # Mostrar pregunta
+                st.markdown(f"---")
+                st.markdown(f"### ¿Quieres hacer otro corte? (Ronda {ronda + 1})")
+                respuesta = st.radio(
+                    f"Ronda {ronda + 1}:",
+                    ["No", "Sí"],
+                    key=clave_radio,
+                    horizontal=True
+                )
             
-            # Verificar si existe Ronda 2
-            if "fragmentos_ronda_2" in st.session_state:
+                if respuesta == "Sí":
+                    # Construir opciones de fragmentos disponibles
+                    opciones = {"Secuencia original": st.session_state["fragmentos_ronda_0"][0]}
+                    for i in range(ronda):
+                        for j, frag in enumerate(st.session_state.get(f"fragmentos_ronda_{i}", [])):
+                            opciones[f"R{i+1} - Fragmento {j+1}"] = frag
             
-                seleccion_actual_ronda_2 = {
-                    "fragmento": st.session_state.get("frag_ronda_1"),
-                    "cortador": st.session_state.get("corte_ronda_1")
-                }
+                    seleccion = st.selectbox(
+                        f"Selecciona el fragmento o secuencia para cortar (Ronda {ronda + 1}):",
+                        opciones.keys(),
+                        key=clave_seleccion
+                    )
+                    secuencia_actual = opciones[seleccion]
             
-                # Si es la primera vez, la guardamos
-                if "seleccion_ronda_2" not in st.session_state:
-                    st.session_state["seleccion_ronda_2"] = seleccion_actual_ronda_2
+                    cortador = st.selectbox(
+                        f"Selecciona el cortador (Ronda {ronda + 1}):",
+                        list(cortadores.keys()),
+                        key=clave_corte
+                    )
+                    modo = cortadores[cortador]["modo"]
+                    residuos = cortadores[cortador]["residuos"]
             
-                # Si hubo cambio, reiniciar todo y salir
-                if seleccion_actual_ronda_2 != st.session_state["seleccion_ronda_2"]:
-                    st.warning("Has cambiado la selección de la segunda ronda. Ronda 3 ha sido reiniciada.")
-                    for key in ["fragmentos_ronda_3", "seleccion_ronda_3", "hacer_otra_ronda_3", "radio_ronda_3"]:
-                        if key in st.session_state:
-                            del st.session_state[key]
-                    st.session_state["seleccion_ronda_2"] = seleccion_actual_ronda_2
-                    st.stop()  # DETIENE LA EJECUCIÓN, NO MUESTRA MÁS
+                    if modo == "aleatorio":
+                        st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+                        nuevos = digestion_aleatoria_controlada(secuencia_actual)
+                    else:
+                        st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
+                        nuevos = cortar_peptido(secuencia_actual, residuos, modo)
             
-                # Si todo está bien, ejecuta normalmente
-                control_ronda_3()
-
+                    # Mostrar fragmentos
+                    st.markdown(f"**Fragmentos generados (Ronda {ronda + 1}):**")
+                    for i, frag in enumerate(nuevos, 1):
+                        st.markdown(f"- Fragmento {i}: `{frag}`")
+            
+                    # Guardar fragmentos generados
+                    st.session_state[clave_frag] = nuevos
