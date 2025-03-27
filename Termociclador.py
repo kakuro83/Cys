@@ -151,11 +151,11 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 st.session_state.numero_ronda = 1
 
             cortadores = {
-                "Tripsina": {"modo": "después", "residuos": ["K", "R"]},
-                "Quimotripsina": {"modo": "después", "residuos": ["F", "Y", "W"]},
-                "CNBr": {"modo": "después", "residuos": ["M"]},
-                "Pepsina": {"modo": "antes", "residuos": ["L", "F", "E"]},
-                "Bromelina": {"modo": "antes", "residuos": ["F", "Y", "L", "A", "V"]},
+                "Tripsina": {"modo": "después de", "residuos": ["K", "R"]},
+                "Quimotripsina": {"modo": "después de", "residuos": ["F", "Y", "W"]},
+                "CNBr": {"modo": "después de", "residuos": ["M"]},
+                "Pepsina": {"modo": "antes de", "residuos": ["L", "F", "E"]},
+                "Bromelina": {"modo": "antes de", "residuos": ["F", "Y", "L", "A", "V"]},
                 "Digestión con HCl 6M": {"modo": "aleatorio", "residuos": []}
             }
 
@@ -285,7 +285,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 
         if ciclico:
             if not propuesta.startswith("(C)"):
-                st.error("❌ Revisa el orden o los residuos o inicia con (c) si es cíclica")
+                st.error("❌ Revisa el orden de los residuos o inicia con (c) si es cíclica")
             else:
                 propuesta_limpia = propuesta.replace("(C)", "")
                 rotaciones_validas = [
