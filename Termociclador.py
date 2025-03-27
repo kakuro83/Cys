@@ -108,7 +108,16 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             
             st.session_state["num_rondas"] = num_rondas
             st.session_state["fragmentos_ronda_0"] = [secuencia]
-            
+
+            cortadores = {
+                    "Tripsina": {"residuos": ["K", "R"], "modo": "después"},
+                    "Quimotripsina": {"residuos": ["F", "Y", "W"], "modo": "después"},
+                    "CNBr": {"residuos": ["M"], "modo": "después"},
+                    "Pepsina": {"residuos": ["L", "F", "E"], "modo": "antes"},
+                    "Bromelina": {"residuos": ["A", "G"], "modo": "antes"},
+                    "Digestión con HCl 6M": {"residuos": [], "modo": "aleatorio"}
+            }
+
             # --- FUNCIONES ---
             def cortar_peptido(secuencia, residuos, modo):
                 fragmentos = []
