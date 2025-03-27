@@ -265,3 +265,48 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     "fragmento": st.session_state.get("frag_ronda_1"),
                     "cortador": st.session_state.get("corte_ronda_1")
                 }
+
+            # --- CONTROL DE RONDA 3 ---
+            
+            # Guardar selecciones de ronda 2 (si no existen)
+            if "seleccion_ronda_2" not in st.session_state and "frag_ronda_1" in st.session_state:
+                st.session_state["seleccion_ronda_2"] = {
+                    "fragmento": st.session_state["frag_ronda_1"],
+                    "cortador": st.session_state["corte_ronda_1"]
+                }
+            
+            # Verificar si hubo cambios en ronda 2
+            seleccion_actual_ronda_2 = {
+                "fragmento": st.session_state.get("frag_ronda_1"),
+                "cortador": st.session_state.get("corte_ronda_1")
+            }
+            
+            if seleccion_actual_ronda_2 != st.session_state.get("seleccion_ronda_2"):
+                st.warning("Has cambiado la selección de la segunda ronda. Ronda 3 ha sido reiniciada.")
+                if "fragmentos_ronda_3" in st.session_state:
+                    del st.session_state["fragmentos_ronda_3"]
+                if "seleccion_ronda_3" in st.session_state:
+                    del st.session_state["seleccion_ronda_3"]
+                if "hacer_otra_ronda_3" in st.session_state:
+                    del st.session_state["hacer_otra_ronda_3"]
+                st.session_state["seleccion_ronda_2"] = seleccion_actual_ronda_2
+            
+            # PREGUNTA: ¿Desea continuar a ronda 3?
+            if "hacer_otra_ronda_3" not in st.session_state:
+                st.session_state["hacer_otra_ronda_3"] = None
+            
+            st.session_state["hacer_otra_ronda_3"] = st.radio(
+                "¿Quieres hacer otro corte (ronda 3)?",
+                ["No", "Sí"],
+                index=0 if st.session_state["hacer_otra_ronda_3"] is None else ["No", "Sí"].index(st.session_state["hacer_otra_ronda_3"]),
+                key="radio_ronda_3"
+            )
+            
+            # Ejecutar ronda 3 si aplica
+            if st.session_state["hacer_otra_ronda_3"] == "Sí" and "fragmentos_ronda_2" in st.session_state:
+                fragmentos_ronda_3 = ejecutar_ronda(2, st.session_state["fragmentos_ronda_2"])
+                st.session_state["fragmentos_ronda_3"] = fragmentos_ronda_3
+                st.session_state["seleccion_ronda_3"] = {
+                    "fragmento": st.session_state.get("frag_ronda_2"),
+                    "cortador": st.session_state.get("corte_ronda_2")
+                }
