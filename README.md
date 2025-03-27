@@ -40,12 +40,10 @@ Este proyecto es una aplicación educativa interactiva desarrollada en **Streaml
 
 ## 📁 Estructura esperada del archivo en Google Sheets
 
-Hoja oculta `Cys` con las siguientes columnas:
+Hoja con las siguientes columnas:
 
 | Código | Secuencia      | Cíclico |
 |--------|----------------|---------|
-| P001   | AKGEFLMKG      | No      |
-| P002   | (c)FELKAMRG    | Sí      |
 
 > ⚠️ Asegúrate de que esta hoja esté configurada como pública para que Streamlit pueda accederla sin autenticación.
 
