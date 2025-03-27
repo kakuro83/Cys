@@ -201,33 +201,60 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             # --- INICIO DEL TERMO CICLADOR ---
             st.markdown("## 🧪 Termociclador virtual")
             
+           # --- INICIALIZACIÓN Y RONDA 1 ---
+            if "num_rondas" not in st.session_state:
+                num_rondas = 3
+                if numero_real > 10:
+                    num_rondas += (numero_real - 10) // 5
+                st.session_state["num_rondas"] = num_rondas
+            
+            # Guardamos la secuencia original como input base
+            st.session_state["fragmentos_ronda_0"] = [secuencia]
+            
+            # Ejecutamos ronda 1
             fragmentos_ronda_1 = ejecutar_ronda(0, st.session_state["fragmentos_ronda_0"])
             st.session_state["fragmentos_ronda_1"] = fragmentos_ronda_1
-
-            # --- GUARDAR SELECCIONES DE RONDA 1 PARA CONTROL DE CAMBIOS ---
+            
+            # Guardamos selecciones de ronda 1 para detectar cambios
             if "seleccion_ronda_1" not in st.session_state:
                 st.session_state["seleccion_ronda_1"] = {
                     "fragmento": "Secuencia original",
                     "cortador": st.session_state.get("corte_ronda_0")
                 }
             
-            # --- SI NO SE CAMBIÓ, MOSTRAR RONDA 2 ---
-            seleccion_actual = {
+            # Detectar si se ha cambiado la selección en ronda 1
+            seleccion_actual_ronda_1 = {
                 "fragmento": "Secuencia original",  # ronda 1 siempre usa secuencia original
                 "cortador": st.session_state.get("corte_ronda_0")
             }
             
-            if seleccion_actual == st.session_state["seleccion_ronda_1"]:
-                # Ejecutamos la ronda 2 si todo sigue igual
+            # Si cambió, reiniciamos estado posterior y pregunta
+            if seleccion_actual_ronda_1 != st.session_state["seleccion_ronda_1"]:
+                st.warning("Has cambiado la selección de la primera ronda. Rondas posteriores han sido reiniciadas.")
+                st.session_state["seleccion_ronda_1"] = seleccion_actual_ronda_1
+                if "fragmentos_ronda_2" in st.session_state:
+                    del st.session_state["fragmentos_ronda_2"]
+                if "seleccion_ronda_2" in st.session_state:
+                    del st.session_state["seleccion_ronda_2"]
+                if "hacer_otra_ronda_2" in st.session_state:
+                    del st.session_state["hacer_otra_ronda_2"]
+            
+            # PREGUNTA: ¿Quieres hacer otro corte?
+            if "hacer_otra_ronda_2" not in st.session_state:
+                st.session_state["hacer_otra_ronda_2"] = None
+            
+            st.session_state["hacer_otra_ronda_2"] = st.radio(
+                "¿Quieres hacer otro corte?",
+                ["No", "Sí"],
+                index=0 if st.session_state["hacer_otra_ronda_2"] is None else ["No", "Sí"].index(st.session_state["hacer_otra_ronda_2"]),
+                key="radio_ronda_2"
+            )
+            
+            # Ejecutar ronda 2 solo si el estudiante dijo que sí
+            if st.session_state["hacer_otra_ronda_2"] == "Sí":
                 fragmentos_ronda_2 = ejecutar_ronda(1, fragmentos_ronda_1)
                 st.session_state["fragmentos_ronda_2"] = fragmentos_ronda_2
                 st.session_state["seleccion_ronda_2"] = {
                     "fragmento": st.session_state.get("frag_ronda_1"),
                     "cortador": st.session_state.get("corte_ronda_1")
                 }
-            else:
-                st.warning("Has cambiado la selección de la primera ronda. Rondas posteriores han sido reiniciadas.")
-                if "fragmentos_ronda_2" in st.session_state:
-                    del st.session_state["fragmentos_ronda_2"]
-                if "seleccion_ronda_2" in st.session_state:
-                    del st.session_state["seleccion_ronda_2"]
