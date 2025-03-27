@@ -207,3 +207,31 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                         del st.session_state[key]
                 st.success("Termociclador reiniciado. Puedes comenzar de nuevo.")
                 st.rerun()
+st.markdown("---")
+st.markdown("## ✅ Validación de tu secuencia propuesta")
+
+secuencia_usuario = st.text_input("Ingresa la secuencia que crees correcta (si es cíclica, comienza con '(c)'):")
+
+def rotaciones_ciclicas(seq):
+    """Genera todas las rotaciones posibles de una secuencia cíclica"""
+    return [seq[i:] + seq[:i] for i in range(len(seq))]
+
+if st.button("🔍 Validar secuencia"):
+    secuencia_real_sin_c = secuencia_real.replace("(c)", "").upper()
+    propuesta = secuencia_usuario.strip().upper()
+
+    if ciclico:
+        if not propuesta.startswith("(C)"):
+            st.error("La secuencia es cíclica. Debes comenzar con '(c)'.")
+        else:
+            propuesta_limpia = propuesta.replace("(C)", "")
+            rotaciones_validas = rotaciones_ciclicas(secuencia_real_sin_c)
+            if propuesta_limpia in rotaciones_validas:
+                st.success("✅ ¡Secuencia correcta!")
+            else:
+                st.error("❌ La secuencia no es correcta. Revisa el orden o los residuos.")
+    else:
+        if propuesta == secuencia_real.upper():
+            st.success("✅ ¡Secuencia correcta!")
+        else:
+            st.error("❌ La secuencia no es correcta.")
