@@ -214,7 +214,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 for key in ["fragmentos_disponibles", "resumen_rondas", "numero_ronda"]:
                     if key in st.session_state:
                         del st.session_state[key]
-                st.experimental_rerun()
+                st.rerun()
 
             # --- INICIO DEL TERMO CICLADOR ---
             st.markdown("## 🧪 Termociclador virtual")
