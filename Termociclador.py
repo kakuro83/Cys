@@ -207,56 +207,56 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             
            st.markdown("## 🧪 Termociclador virtual")
 
-# --- INICIALIZACIÓN DEL ESTADO ---
-if "fragmentos_disponibles" not in st.session_state:
-    st.session_state.fragmentos_disponibles = {"R0 - Secuencia original": secuencia}  # secuencia original ya cargada
-if "resumen_rondas" not in st.session_state:
-    st.session_state.resumen_rondas = []
-if "numero_ronda" not in st.session_state:
-    st.session_state.numero_ronda = 1
-
-# --- DESPLEGABLE: Selección de secuencia/fragmento ---
-fragmento_seleccionado_label = st.selectbox(
-    "Selecciona la secuencia o fragmento que deseas cortar:",
-    list(st.session_state.fragmentos_disponibles.keys())
-)
-fragmento_seleccionado = st.session_state.fragmentos_disponibles[fragmento_seleccionado_label]
-
-# --- DESPLEGABLE: Cortador ---
-cortador = st.selectbox("Selecciona el cortador:", list(cortadores.keys()))
-modo = cortadores[cortador]["modo"]
-residuos = cortadores[cortador]["residuos"]
-
-# --- Mostrar explicación del cortador ---
-if modo == "aleatorio":
-    st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
-    fragmentos_generados = digestion_aleatoria_controlada(fragmento_seleccionado)
-else:
-    st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
-    fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
-
-# --- Mostrar fragmentos generados ---
-st.markdown("**Fragmentos generados:**")
-for i, frag in enumerate(fragmentos_generados, 1):
-    st.markdown(f"- Fragmento {i}: `{frag}`")
-
-# --- GUARDAR RESULTADO EN EL RESUMEN ---
-if st.button("💾 Guardar corte"):
-    # Registrar en resumen
-    st.session_state.resumen_rondas.append({
-        "Ronda": st.session_state.numero_ronda,
-        "Cortador": cortador,
-        "Cortado desde": fragmento_seleccionado_label,
-        "Fragmentos": fragmentos_generados
-    })
-
-    # Agregar nuevos fragmentos al diccionario de selección
-    for i, frag in enumerate(fragmentos_generados, 1):
-        nueva_etiqueta = f"R{st.session_state.numero_ronda} - Fragmento {i}"
-        st.session_state.fragmentos_disponibles[nueva_etiqueta] = frag
-
-    # Aumentar contador de rondas hasta un máximo de 10
-    if st.session_state.numero_ronda < 10:
-        st.session_state.numero_ronda += 1
-    else:
-        st.warning("⚠️ Se alcanzó el máximo de 10 rondas.")
+            # --- INICIALIZACIÓN DEL ESTADO ---
+            if "fragmentos_disponibles" not in st.session_state:
+                st.session_state.fragmentos_disponibles = {"R0 - Secuencia original": secuencia}  # secuencia original ya cargada
+            if "resumen_rondas" not in st.session_state:
+                st.session_state.resumen_rondas = []
+            if "numero_ronda" not in st.session_state:
+                st.session_state.numero_ronda = 1
+            
+            # --- DESPLEGABLE: Selección de secuencia/fragmento ---
+            fragmento_seleccionado_label = st.selectbox(
+                "Selecciona la secuencia o fragmento que deseas cortar:",
+                list(st.session_state.fragmentos_disponibles.keys())
+            )
+            fragmento_seleccionado = st.session_state.fragmentos_disponibles[fragmento_seleccionado_label]
+            
+            # --- DESPLEGABLE: Cortador ---
+            cortador = st.selectbox("Selecciona el cortador:", list(cortadores.keys()))
+            modo = cortadores[cortador]["modo"]
+            residuos = cortadores[cortador]["residuos"]
+            
+            # --- Mostrar explicación del cortador ---
+            if modo == "aleatorio":
+                st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+                fragmentos_generados = digestion_aleatoria_controlada(fragmento_seleccionado)
+            else:
+                st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
+                fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
+            
+            # --- Mostrar fragmentos generados ---
+            st.markdown("**Fragmentos generados:**")
+            for i, frag in enumerate(fragmentos_generados, 1):
+                st.markdown(f"- Fragmento {i}: `{frag}`")
+            
+            # --- GUARDAR RESULTADO EN EL RESUMEN ---
+            if st.button("💾 Guardar corte"):
+                # Registrar en resumen
+                st.session_state.resumen_rondas.append({
+                    "Ronda": st.session_state.numero_ronda,
+                    "Cortador": cortador,
+                    "Cortado desde": fragmento_seleccionado_label,
+                    "Fragmentos": fragmentos_generados
+                })
+            
+                # Agregar nuevos fragmentos al diccionario de selección
+                for i, frag in enumerate(fragmentos_generados, 1):
+                    nueva_etiqueta = f"R{st.session_state.numero_ronda} - Fragmento {i}"
+                    st.session_state.fragmentos_disponibles[nueva_etiqueta] = frag
+            
+                # Aumentar contador de rondas hasta un máximo de 10
+                if st.session_state.numero_ronda < 10:
+                    st.session_state.numero_ronda += 1
+                else:
+                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas.")
