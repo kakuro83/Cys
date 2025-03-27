@@ -146,7 +146,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             st.markdown("### 🧪 Método de Sanger – Identificación del N-terminal")
             
             if ciclico:
-                st.info("🔄 **Secuencia cíclica** – No se detecta N-terminal con el método de Sanger.")
+                st.info("🔄 No se detecta N-terminal con el método de Sanger.")
             else:
                 aa_n_terminal = secuencia[0]
                 st.success(f"🧬 N-terminal identificado: **{aa_n_terminal}**")
