@@ -232,18 +232,6 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 "cortador": st.session_state.get("corte_ronda_0")
             }
             
-            # Si cambió, reiniciamos estado posterior y pregunta
-            if seleccion_actual_ronda_1 != st.session_state["seleccion_ronda_1"]:
-                st.warning("Has cambiado la selección de la primera ronda. Rondas posteriores han sido reiniciadas.")
-                st.session_state["seleccion_ronda_1"] = seleccion_actual_ronda_1
-                if "fragmentos_ronda_2" in st.session_state:
-                    del st.session_state["fragmentos_ronda_2"]
-                if "seleccion_ronda_2" in st.session_state:
-                    del st.session_state["seleccion_ronda_2"]
-                if "hacer_otra_ronda_2" in st.session_state:
-                    del st.session_state["hacer_otra_ronda_2"]
-            
-          
            # --- RONDAS 2 EN ADELANTE (desde ronda=1 hasta num_rondas - 1) ---
             for ronda in range(1, st.session_state["num_rondas"]):
                 clave_frag = f"fragmentos_ronda_{ronda}"
