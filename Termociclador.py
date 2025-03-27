@@ -219,30 +219,36 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 st.markdown("---")
 st.markdown("## ✅ Validación de tu secuencia propuesta")
 
-# Recuperamos el valor anterior si existe
-if "entrada_usuario" not in st.session_state:
-    st.session_state["entrada_usuario"] = ""
+# Inicialización segura
+if "secuencia_usuario" not in st.session_state:
+    st.session_state["secuencia_usuario"] = ""
 
-# Campo editable, pero actualizado en tiempo real con formato
-entrada_cruda = st.text_input(
-    "Ingresa la secuencia que crees correcta (si es cíclica, comienza con '(c)'):",
-    value=st.session_state["entrada_usuario"],
-    key="input_secuencia"
+# Campo único editable
+entrada = st.text_input(
+    "Escribe tu secuencia (se convertirá automáticamente a mayúsculas excepto el prefijo '(c)'):",
+    value=st.session_state["secuencia_usuario"]
 )
 
-# Actualizamos a mayúsculas, respetando (c)
-if entrada_cruda.lower().startswith("(c)"):
-    propuesta_estandar = "(c)" + entrada_cruda[3:].upper()
+# Autoformato mientras escribe
+if entrada.lower().startswith("(c)"):
+    formateada = "(c)" + entrada[3:].upper()
 else:
-    propuesta_estandar = entrada_cruda.upper()
+    formateada = entrada.upper()
 
-# Guardamos el nuevo valor estandarizado para que aparezca formateado
-st.session_state["entrada_usuario"] = propuesta_estandar
+# Guardar entrada formateada
+st.session_state["secuencia_usuario"] = formateada
 
-# Botón de validación
+# Mostrar celda nuevamente (actualizada)
+entrada_formateada = st.text_input(
+    "Tu secuencia estandarizada (puedes seguir editándola):",
+    value=formateada,
+    key="secuencia_final"
+)
+
+# Validación
 if st.button("🔍 Validar secuencia"):
     secuencia_real_sin_c = secuencia_real.replace("(c)", "").upper()
-    propuesta = st.session_state["entrada_usuario"]
+    propuesta = st.session_state["secuencia_final"]
 
     if ciclico:
         if not propuesta.startswith("(C)"):
@@ -251,5 +257,16 @@ if st.button("🔍 Validar secuencia"):
             propuesta_limpia = propuesta.replace("(C)", "")
             rotaciones_validas = [secuencia_real_sin_c[i:] + secuencia_real_sin_c[:i] for i in range(len(secuencia_real_sin_c))]
             if propuesta_limpia in rotaciones_validas:
-                st
+                st.success("✅ ¡Secuencia correcta!")
+                if st.button("💾 Guardar resultado"):
+                    st.success("✅ Resultado registrado correctamente.")
+            else:
+                st.error("❌ La secuencia no es correcta. Revisa el orden o los residuos.")
+    else:
+        if propuesta == secuencia_real.upper():
+            st.success("✅ ¡Secuencia correcta!")
+            if st.button("💾 Guardar resultado"):
+                st.success("✅ Resultado registrado correctamente.")
+        else:
+            st.error("❌ La secuencia no es correcta.")
 
