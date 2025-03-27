@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import random
 
 # --- FUNCIÓN PARA CARGAR HOJA "Cys" DESDE GOOGLE SHEETS ---
 @st.cache_data
