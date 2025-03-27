@@ -199,3 +199,31 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             
             fragmentos_ronda_1 = ejecutar_ronda(0, st.session_state["fragmentos_ronda_0"])
             st.session_state["fragmentos_ronda_1"] = fragmentos_ronda_1
+
+            # --- GUARDAR SELECCIONES DE RONDA 1 PARA CONTROL DE CAMBIOS ---
+            if "seleccion_ronda_1" not in st.session_state:
+                st.session_state["seleccion_ronda_1"] = {
+                    "fragmento": "Secuencia original",
+                    "cortador": st.session_state.get("corte_ronda_0")
+                }
+            
+            # --- SI NO SE CAMBIÓ, MOSTRAR RONDA 2 ---
+            seleccion_actual = {
+                "fragmento": "Secuencia original",  # ronda 1 siempre usa secuencia original
+                "cortador": st.session_state.get("corte_ronda_0")
+            }
+            
+            if seleccion_actual == st.session_state["seleccion_ronda_1"]:
+                # Ejecutamos la ronda 2 si todo sigue igual
+                fragmentos_ronda_2 = ejecutar_ronda(1, fragmentos_ronda_1)
+                st.session_state["fragmentos_ronda_2"] = fragmentos_ronda_2
+                st.session_state["seleccion_ronda_2"] = {
+                    "fragmento": st.session_state.get("frag_ronda_1"),
+                    "cortador": st.session_state.get("corte_ronda_1")
+                }
+            else:
+                st.warning("Has cambiado la selección de la primera ronda. Rondas posteriores han sido reiniciadas.")
+                if "fragmentos_ronda_2" in st.session_state:
+                    del st.session_state["fragmentos_ronda_2"]
+                if "seleccion_ronda_2" in st.session_state:
+                    del st.session_state["seleccion_ronda_2"]
