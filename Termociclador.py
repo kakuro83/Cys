@@ -281,3 +281,11 @@ if st.session_state.resumen_rondas:
         st.markdown("**Fragmentos generados:**")
         for i, frag in enumerate(ronda["Fragmentos"], 1):
             st.markdown(f"  - Fragmento {i}: `{frag}`")
+
+# --- BOTÓN PARA REINICIAR TODO ---
+if st.button("🔁 Reiniciar termociclador"):
+    for key in ["fragmentos_disponibles", "resumen_rondas", "numero_ronda"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.success("Termociclador reiniciado. Puedes comenzar de nuevo.")
+    st.experimental_rerun()
