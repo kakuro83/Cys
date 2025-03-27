@@ -219,24 +219,30 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 st.markdown("---")
 st.markdown("## ✅ Validación de tu secuencia propuesta")
 
-# Captura lo que escribe el estudiante
-entrada_cruda = st.text_input("Ingresa la secuencia que crees correcta (si es cíclica, comienza con '(c)'):")
+# Recuperamos el valor anterior si existe
+if "entrada_usuario" not in st.session_state:
+    st.session_state["entrada_usuario"] = ""
 
-# Estandarización: se convierte automáticamente en mayúsculas (excepto prefijo)
+# Campo editable, pero actualizado en tiempo real con formato
+entrada_cruda = st.text_input(
+    "Ingresa la secuencia que crees correcta (si es cíclica, comienza con '(c)'):",
+    value=st.session_state["entrada_usuario"],
+    key="input_secuencia"
+)
+
+# Actualizamos a mayúsculas, respetando (c)
 if entrada_cruda.lower().startswith("(c)"):
     propuesta_estandar = "(c)" + entrada_cruda[3:].upper()
 else:
     propuesta_estandar = entrada_cruda.upper()
 
-# Vista previa de la entrada estandarizada
-st.text_input("Vista previa (autoformato):", value=propuesta_estandar, disabled=True)
+# Guardamos el nuevo valor estandarizado para que aparezca formateado
+st.session_state["entrada_usuario"] = propuesta_estandar
 
-# Bandera para habilitar el botón de guardar solo si es correcta
-secuencia_valida_ok = False
-
+# Botón de validación
 if st.button("🔍 Validar secuencia"):
     secuencia_real_sin_c = secuencia_real.replace("(c)", "").upper()
-    propuesta = propuesta_estandar
+    propuesta = st.session_state["entrada_usuario"]
 
     if ciclico:
         if not propuesta.startswith("(C)"):
@@ -245,19 +251,5 @@ if st.button("🔍 Validar secuencia"):
             propuesta_limpia = propuesta.replace("(C)", "")
             rotaciones_validas = [secuencia_real_sin_c[i:] + secuencia_real_sin_c[:i] for i in range(len(secuencia_real_sin_c))]
             if propuesta_limpia in rotaciones_validas:
-                st.success("✅ ¡Secuencia correcta!")
-                secuencia_valida_ok = True
-            else:
-                st.error("❌ La secuencia no es correcta. Revisa el orden o los residuos.")
-    else:
-        if propuesta == secuencia_real.upper():
-            st.success("✅ ¡Secuencia correcta!")
-            secuencia_valida_ok = True
-        else:
-            st.error("❌ La secuencia no es correcta.")
-
-# Si la secuencia es válida, permitir guardar resultado
-if secuencia_valida_ok:
-    if st.button("💾 Guardar resultado"):
-        st.success("✅ Resultado registrado correctamente (aquí puedes guardar en CSV o GitHub si deseas).")
+                st
 
