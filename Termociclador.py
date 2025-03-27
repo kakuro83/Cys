@@ -98,10 +98,109 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                         del st.session_state[key]
                 st.rerun()
 
-            from termociclador_bloques import termociclador_virtual
-            termociclador_virtual(secuencia, ciclico)
+            # --- INICIO DEL TERMO CICLADOR DIRECTAMENTE ---
+            if "fragmentos_disponibles" not in st.session_state:
+                st.session_state.fragmentos_disponibles = {"R0 - Secuencia original": secuencia}
+            if "resumen_rondas" not in st.session_state:
+                st.session_state.resumen_rondas = []
+            if "numero_ronda" not in st.session_state:
+                st.session_state.numero_ronda = 1
 
-            # --- BOTÓN PARA REINICIAR MANUALMENTE ---
+            cortadores = {
+                "Tripsina": {"modo": "después", "residuos": ["K", "R"]},
+                "Quimotripsina": {"modo": "después", "residuos": ["F", "Y", "W"]},
+                "CNBr": {"modo": "después", "residuos": ["M"]},
+                "Pepsina": {"modo": "antes", "residuos": ["L", "F", "E"]},
+                "Bromelina": {"modo": "antes", "residuos": ["A", "G"]},
+                "Digestión con HCl 6M": {"modo": "aleatorio", "residuos": []}
+            }
+
+            def cortar_peptido(secuencia, residuos, modo):
+                fragmentos = []
+                actual = ""
+                for aa in secuencia:
+                    if modo == "después":
+                        actual += aa
+                        if aa in residuos:
+                            fragmentos.append(actual)
+                            actual = ""
+                    elif modo in ["antes", "before"]:
+                        if aa in residuos:
+                            if actual:
+                                fragmentos.append(actual)
+                            actual = aa
+                        else:
+                            actual += aa
+                if actual:
+                    fragmentos.append(actual)
+                return fragmentos
+
+            def digestion_aleatoria_controlada(secuencia):
+                longitud = len(secuencia)
+                if longitud <= 1:
+                    return [secuencia]
+                n_fragmentos = 5
+                if longitud > 10:
+                    n_fragmentos += (longitud - 10) // 3
+                n_fragmentos = min(n_fragmentos, longitud)
+                if n_fragmentos == 1:
+                    return [secuencia]
+                indices = sorted(random.sample(range(1, longitud), n_fragmentos - 1))
+                indices = [0] + indices + [longitud]
+                fragmentos = [secuencia[indices[i]:indices[i+1]] for i in range(len(indices) - 1)]
+                return fragmentos
+
+            st.markdown("## 🧪 Termociclador virtual")
+
+            fragmento_seleccionado_label = st.selectbox(
+                "Selecciona la secuencia o fragmento que deseas cortar:",
+                list(st.session_state.fragmentos_disponibles.keys())
+            )
+            fragmento_seleccionado = st.session_state.fragmentos_disponibles[fragmento_seleccionado_label]
+
+            cortador = st.selectbox("Selecciona el cortador:", list(cortadores.keys()))
+            modo = cortadores[cortador]["modo"]
+            residuos = cortadores[cortador]["residuos"]
+
+            if modo == "aleatorio":
+                st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
+                fragmentos_generados = digestion_aleatoria_controlada(fragmento_seleccionado)
+            else:
+                st.info(f"**{cortador}** corta **{modo}** los residuos: {', '.join(residuos)}")
+                fragmentos_generados = cortar_peptido(fragmento_seleccionado, residuos, modo)
+
+            st.markdown("**Fragmentos generados:**")
+            for i, frag in enumerate(fragmentos_generados, 1):
+                st.markdown(f"- Fragmento {i}: `{frag}`")
+
+            if st.button("💾 Guardar corte"):
+                st.session_state.resumen_rondas.append({
+                    "Ronda": st.session_state.numero_ronda,
+                    "Cortador": cortador,
+                    "Cortado desde": fragmento_seleccionado_label,
+                    "Fragmentos": fragmentos_generados
+                })
+
+                for i, frag in enumerate(fragmentos_generados, 1):
+                    nueva_etiqueta = f"R{st.session_state.numero_ronda} - Fragmento {i}"
+                    st.session_state.fragmentos_disponibles[nueva_etiqueta] = frag
+
+                if st.session_state.numero_ronda < 10:
+                    st.session_state.numero_ronda += 1
+                else:
+                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas.")
+
+            if st.session_state.resumen_rondas:
+                st.markdown("---")
+                st.markdown("## 📋 Resumen de cortes realizados")
+                for ronda in st.session_state.resumen_rondas:
+                    st.markdown(f"### 🔄 Ronda {ronda['Ronda']}")
+                    st.markdown(f"- **Cortador aplicado:** {ronda['Cortador']}")
+                    st.markdown(f"- **Fragmento cortado:** `{ronda['Cortado desde']}`")
+                    st.markdown("**Fragmentos generados:**")
+                    for i, frag in enumerate(ronda["Fragmentos"], 1):
+                        st.markdown(f"  - Fragmento {i}: `{frag}`")
+
             if st.button("🔁 Reiniciar termociclador"):
                 for key in ["fragmentos_disponibles", "resumen_rondas", "numero_ronda"]:
                     if key in st.session_state:
