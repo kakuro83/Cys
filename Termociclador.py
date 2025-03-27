@@ -157,19 +157,22 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             def ejecutar_ronda(ronda, fragmentos_entrada):
                 st.markdown(f"### Ronda {ronda + 1}: Selección de corte")
             
-                # --- Selección del fragmento solo desde ronda 2 en adelante ---
                 if ronda == 0:
                     secuencia_actual = fragmentos_entrada[0]
                     seleccion = "Secuencia original"
                     st.info("Usando la secuencia original para el primer corte.")
                 else:
-                    opciones = {f"Fragmento {i+1}": f for i, f in enumerate(fragmentos_entrada)}
+                    # Incluir secuencia original + fragmentos anteriores
+                    opciones = {"Secuencia original": st.session_state["fragmentos_ronda_0"][0]}
+                    opciones.update({f"Fragmento {i+1}": f for i, f in enumerate(fragmentos_entrada)})
+                    
                     seleccion = st.selectbox(
-                        f"Selecciona fragmento para cortar (Ronda {ronda + 1}):",
+                        f"Selecciona fragmento o secuencia original para cortar (Ronda {ronda + 1}):",
                         opciones.keys(),
                         key=f"frag_ronda_{ronda}"
                     )
                     secuencia_actual = opciones[seleccion]
+
             
                 # --- Selección del cortador ---
                 cortador = st.selectbox(
