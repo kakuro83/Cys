@@ -232,9 +232,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 "cortador": st.session_state.get("corte_ronda_0")
             }
 
-            st.session_state["fragmentos_ronda_0"] = [secuencia]
-
-           # --- RONDAS 2 EN ADELANTE ---
+           # --- BLOQUE 2: RONDAS 2 EN ADELANTE ---
             for ronda in range(1, st.session_state["num_rondas"]):
                 clave_frag = f"fragmentos_ronda_{ronda}"
                 clave_corte = f"corte_ronda_{ronda}"
@@ -253,9 +251,8 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 )
             
                 if respuesta == "Sí":
-                    # Construir opciones de fragmentos
+                    # Construcción del diccionario de fragmentos disponibles
                     opciones = {"Secuencia original": st.session_state["fragmentos_ronda_0"][0]}
-            
                     for r_ant in range(1, ronda + 1):
                         clave_ant = f"fragmentos_ronda_{r_ant - 1}"
                         if clave_ant in st.session_state:
@@ -264,29 +261,20 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                                 if etiqueta not in opciones:
                                     opciones[etiqueta] = frag
             
-                            opciones_keys = list(opciones.keys())
-
-                # Establecer un valor por defecto si no hay selección previa
-                seleccion_por_defecto = opciones_keys[0]
-        
-                seleccion = st.selectbox(
-                    f"Selecciona el fragmento o secuencia a cortar (Ronda {ronda + 1}):",
-                    opciones_keys,
-                    index=0,
-                    key=clave_selector
-                )
-        
-                # Validar que la selección sea válida
-                if seleccion is None or seleccion not in opciones:
-                    st.error("⚠️ No se ha podido recuperar el fragmento seleccionado. Intenta recargar.")
-                    st.stop()
-        
-                secuencia_actual = opciones[seleccion]
-
-                    if secuencia_actual is None:
-                        st.error("⚠️ Error: el fragmento seleccionado no es válido.")
+                    opciones_keys = list(opciones.keys())
+                    seleccion = st.selectbox(
+                        f"Selecciona el fragmento o secuencia a cortar (Ronda {ronda + 1}):",
+                        opciones_keys,
+                        index=0,
+                        key=clave_selector
+                    )
+            
+                    # Validar selección
+                    if seleccion is None or seleccion not in opciones:
+                        st.error("⚠️ No se ha podido recuperar el fragmento seleccionado. Intenta recargar.")
                         st.stop()
-
+            
+                    secuencia_actual = opciones[seleccion]
             
                     # Selección del cortador
                     cortador = st.selectbox(
@@ -309,5 +297,5 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     for i, frag in enumerate(nuevos, 1):
                         st.markdown(f"- Fragmento {i}: `{frag}`")
             
-                    # Guardar fragmentos para próxima ronda
+                    # Guardar resultados
                     st.session_state[clave_frag] = nuevos
