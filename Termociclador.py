@@ -111,7 +111,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 "Quimotripsina": {"modo": "después", "residuos": ["F", "Y", "W"]},
                 "CNBr": {"modo": "después", "residuos": ["M"]},
                 "Pepsina": {"modo": "antes", "residuos": ["L", "F", "E"]},
-                "Bromelina": {"modo": "antes", "residuos": ["A", "G"]},
+                "Bromelina": {"modo": "antes", "residuos": ["F", "Y", "L", "A", "V"]},
                 "Digestión con HCl 6M": {"modo": "aleatorio", "residuos": []}
             }
 
