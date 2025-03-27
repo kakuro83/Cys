@@ -230,8 +230,9 @@ if entrada_cruda.lower().startswith("(c)"):
 else:
     propuesta_estandar = entrada_cruda.upper()
 
-# Vista previa no editable
-st.text_input("Vista previa estandarizada:", value=propuesta_estandar, disabled=True)
+# Vista previa bonita como texto normal
+if entrada_cruda:
+    st.markdown(f"**Vista previa estandarizada:** `{propuesta_estandar}`")
 
 # Validación al hacer clic
 if st.button("🔍 Validar secuencia"):
@@ -257,4 +258,5 @@ if st.button("🔍 Validar secuencia"):
                 st.success("✅ Resultado registrado correctamente.")
         else:
             st.error("❌ La secuencia no es correcta.")
+
 
