@@ -142,6 +142,15 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                         del st.session_state[key]
                 st.rerun()
 
+            # --- SIMULACIÓN DEL MÉTODO DE SANGER ---
+            st.markdown("### 🧪 Método de Sanger – Identificación del N-terminal")
+            
+            if ciclico:
+                st.info("🔄 **Secuencia cíclica** – No se detecta N-terminal con el método de Sanger.")
+            else:
+                aa_n_terminal = secuencia[0]
+                st.success(f"🧬 N-terminal identificado: **{aa_n_terminal}**")
+
             # --- INICIO DEL TERMO CICLADOR DIRECTAMENTE ---
             if "fragmentos_disponibles" not in st.session_state:
                 st.session_state.fragmentos_disponibles = {"R0 - Secuencia original": secuencia}
