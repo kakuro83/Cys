@@ -24,7 +24,8 @@ with col2:
 
 df = cargar_hoja_cys()
 
-codigo_ingresado = st.text_input("Ingresa el código de la muestra (ej. P001):").strip().upper()
+st.markdown("### 🤓 Ingresa el código de la muestra (ej. `P001`):")
+codigo_ingresado = st.text_input("", key="codigo_input").strip().upper()
 
 if codigo_ingresado:
     if codigo_ingresado in df['Código'].values:
