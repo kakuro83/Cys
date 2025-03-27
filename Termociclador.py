@@ -76,10 +76,8 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             'Masa molar (Da)': [masas_aminoacidos[aa] for aa in proporciones_ordenadas.keys()],
             '% másico': [round(v, 2) for v in proporciones_ordenadas.values()]
         })
-
-        st.markdown("**Proporciones másicas y masas molares:**")
-        
-        st.markdown("**Proporciones másicas y masas molares:**")
+              
+        st.markdown("**Pesos moleculares y proporciones másicas:**")
         
         # Crear una copia para formatear las columnas
         tabla = df_prop.copy()
@@ -196,7 +194,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 fragmentos = [secuencia[indices[i]:indices[i+1]] for i in range(len(indices) - 1)]
                 return fragmentos
 
-            st.markdown("## 🧪 Termociclador virtual")
+            st.markdown("## 🧪 ¡Hora del Secuenciamiento!")
 
             fragmento_seleccionado_label = st.selectbox(
                 "Selecciona la secuencia o fragmento que deseas cortar:",
@@ -242,7 +240,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 if st.session_state.numero_ronda < 10:
                     st.session_state.numero_ronda += 1
                 else:
-                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas.")
+                    st.warning("⚠️ Se alcanzó el máximo de 10 rondas. Reinicie el Termociclador")
 
             if st.session_state.resumen_rondas:
                 st.markdown("---")
@@ -287,7 +285,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
 
         if ciclico:
             if not propuesta.startswith("(C)"):
-                st.error("La secuencia es cíclica. Debes comenzar con '(c)'.")
+                st.error("❌ Revisa el orden o los residuos o inicia con (c) si es cíclica")
             else:
                 propuesta_limpia = propuesta.replace("(C)", "")
                 rotaciones_validas = [
