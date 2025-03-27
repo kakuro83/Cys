@@ -203,7 +203,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 return nuevos
 
             # --- DETECTAR CAMBIO DE CÓDIGO ---
-            codigo_actual = codigo  # esta variable ya existe
+            codigo_actual = codigo_ingresado  # corregido
             
             if "codigo_anterior" not in st.session_state:
                 st.session_state.codigo_anterior = codigo_actual
@@ -215,7 +215,6 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     if key in st.session_state:
                         del st.session_state[key]
                 st.experimental_rerun()
-
 
             # --- INICIO DEL TERMO CICLADOR ---
             st.markdown("## 🧪 Termociclador virtual")
