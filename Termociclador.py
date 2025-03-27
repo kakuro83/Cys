@@ -202,8 +202,8 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
             
                 return nuevos
             
-                # --- INICIO DEL TERMO CICLADOR ---
-               st.markdown("## 🧪 Termociclador virtual")
+            # --- INICIO DEL TERMO CICLADOR ---
+            st.markdown("## 🧪 Termociclador virtual")
     
                 # --- INICIALIZACIÓN DEL ESTADO ---
                 if "fragmentos_disponibles" not in st.session_state:
