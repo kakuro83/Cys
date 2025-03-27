@@ -253,17 +253,21 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 if respuesta == "Sí":
                     # Construir opciones: secuencia original + todos los fragmentos anteriores
                     opciones = {"Secuencia original": st.session_state["fragmentos_ronda_0"][0]}
-                for i in range(1, ronda + 1):
-                    clave_anterior = f"fragmentos_ronda_{i}"
-                    if clave_anterior in st.session_state:
-                        for j, frag in enumerate(st.session_state[clave_anterior]):
-                            opciones[f"R{i} - Fragmento {j+1}"] = frag
+                    for r_ant in range(1, ronda + 1):
+                        clave_ant = f"fragmentos_ronda_{r_ant - 1}"
+                        if clave_ant in st.session_state:
+                            for idx, frag in enumerate(st.session_state[clave_ant]):
+                                etiqueta = f"R{r_ant} - Fragmento {idx+1}"
+                                # Asegurar que la etiqueta sea única y válida
+                                if etiqueta not in opciones:
+                                    opciones[etiqueta] = frag
             
                     seleccion = st.selectbox(
                         f"Selecciona el fragmento o secuencia a cortar (Ronda {ronda + 1}):",
-                        opciones.keys(),
-                        key=clave_seleccion
+                        list(opciones.keys()),
+                        key=f"seleccion_ronda_{ronda}"
                     )
+
                     secuencia_actual = opciones[seleccion]
             
                     cortador = st.selectbox(
