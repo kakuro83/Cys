@@ -188,7 +188,6 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     st.info("**Digestión con HCl 6M**: corte aleatorio no específico, genera fragmentos que incluyen todos los aminoácidos presentes, con posibles repeticiones.")
                 else:
                     st.info(f"**{cortador}** corta **{modo}** los siguientes residuos: {', '.join(residuos)}")
-
             
                 # --- Aplicar corte ---
                 if modo == "aleatorio":
@@ -244,17 +243,7 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 if "hacer_otra_ronda_2" in st.session_state:
                     del st.session_state["hacer_otra_ronda_2"]
             
-            # PREGUNTA: ¿Quieres hacer otro corte?
-            if "hacer_otra_ronda_2" not in st.session_state:
-                st.session_state["hacer_otra_ronda_2"] = None
-            
-            st.session_state["hacer_otra_ronda_2"] = st.radio(
-                "¿Quieres hacer otro corte?",
-                ["No", "Sí"],
-                index=0 if st.session_state["hacer_otra_ronda_2"] is None else ["No", "Sí"].index(st.session_state["hacer_otra_ronda_2"]),
-                key="radio_ronda_2"
-            )
-            
+          
            # --- RONDAS 2 EN ADELANTE (desde ronda=1 hasta num_rondas - 1) ---
             for ronda in range(1, st.session_state["num_rondas"]):
                 clave_frag = f"fragmentos_ronda_{ronda}"
