@@ -255,3 +255,15 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                     st.session_state.numero_ronda += 1
                 else:
                     st.warning("⚠️ Se alcanzó el máximo de 10 rondas.")
+# --- RESUMEN FINAL ---
+if st.session_state.resumen_rondas:
+    st.markdown("---")
+    st.markdown("## 📋 Resumen de cortes realizados")
+
+    for ronda in st.session_state.resumen_rondas:
+        st.markdown(f"### 🔄 Ronda {ronda['Ronda']}")
+        st.markdown(f"- **Cortador aplicado:** {ronda['Cortador']}")
+        st.markdown(f"- **Fragmento cortado:** `{ronda['Cortado desde']}`")
+        st.markdown("**Fragmentos generados:**")
+        for i, frag in enumerate(ronda["Fragmentos"], 1):
+            st.markdown(f"  - Fragmento {i}: `{frag}`")
