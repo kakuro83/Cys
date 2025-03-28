@@ -163,7 +163,9 @@ if codigo_ingresado and codigo_ingresado in df['Código'].values:
                 "Tripsina": {"modo": "después", "residuos": ["K", "R"]},
                 "Quimotripsina": {"modo": "después", "residuos": ["F", "Y", "W"]},
                 "CNBr": {"modo": "después", "residuos": ["M"]},
-                "Pepsina": {"modo": "antes", "residuos": ["L", "F", "E"]},
+                "Pepsina": {"modo": "antes", "residuos": ["F", "Y", "W"]},
+                "V8 proteasa": {"modo": "después", "residuos": ["D", "E"]},
+                "Asp-N-proteasa": {"modo": "antes", "residuos": ["D", "E"]},
                 "Bromelina": {"modo": "antes", "residuos": ["F", "Y", "L", "A", "V"]},
                 "Digestión con HCl 6M": {"modo": "aleatorio", "residuos": []}
             }
